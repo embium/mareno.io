@@ -36,7 +36,7 @@
 	import PageContainer from '$lib/components/dashboard/PageContainer.svelte';
 	import PageHeader from '$lib/components/dashboard/PageHeader.svelte';
 	import PageContent from '$lib/components/dashboard/PageContent.svelte';
-	import { PUBLIC_API_URL } from '$env/static/public';
+	import { PUBLIC_API_URL } from '$env/dynamic/public';
 
 	// Base API configuration
 	const BASE_API_URL = 'https://mareno.io/api';
