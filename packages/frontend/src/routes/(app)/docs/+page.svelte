@@ -36,10 +36,10 @@
 	import PageContainer from '$lib/components/dashboard/PageContainer.svelte';
 	import PageHeader from '$lib/components/dashboard/PageHeader.svelte';
 	import PageContent from '$lib/components/dashboard/PageContent.svelte';
-	import { PUBLIC_API_URL } from '$env/dynamic/public';
+	import { env } from '$env/dynamic/public';
 
 	// Base API configuration
-	const BASE_API_URL = 'https://mareno.io/api';
+	const BASE_API_URL = env.PUBLIC_API_URL;
 
 	// State for UI navigation & search
 	let selectedCategory = $state('search');
