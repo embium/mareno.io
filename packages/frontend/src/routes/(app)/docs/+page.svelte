@@ -591,7 +591,7 @@ print(response.json())`
 			}
 
 			const targetPath = activeEndpoint?.path || '/search/web';
-			const targetUrl = `${PUBLIC_API_URL}${targetPath}`;
+			const targetUrl = `${env.PUBLIC_API_URL}${targetPath}`;
 
 			const headers: Record<string, string> = {
 				'Content-Type': 'application/json'
