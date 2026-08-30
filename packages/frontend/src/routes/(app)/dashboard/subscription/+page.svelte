@@ -1,0 +1,367 @@
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import {
+		CreditCard,
+		Calendar,
+		Clock,
+		AlertTriangle,
+		CheckCircle2,
+		XCircle,
+		Zap,
+		ChevronRight
+	} from '@lucide/svelte';
+	import { toast } from 'svelte-sonner';
+	import { stripeApi, type SubscriptionDetails } from '$lib/api/stripe.api';
+	import PageContainer from '$lib/components/dashboard/PageContainer.svelte';
+	import PageHeader from '$lib/components/dashboard/PageHeader.svelte';
+	import PageContent from '$lib/components/dashboard/PageContent.svelte';
+	import { Skeleton } from '$lib/components/ui/skeleton';
+	import * as Card from '$lib/components/ui/card';
+	import * as Alert from '$lib/components/ui/alert';
+	import { Button } from '$lib/components/ui/button';
+
+	let subscription = $state<SubscriptionDetails | null>(null);
+	let loading = $state(true);
+	let cancelling = $state(false);
+	let showCancelConfirm = $state(false);
+
+	onMount(async () => {
+		try {
+			subscription = await stripeApi.getSubscription();
+		} catch {
+			toast.error('Failed to load subscription details.');
+		} finally {
+			loading = false;
+		}
+	});
+
+	function formatDate(unix: number | null | undefined): string {
+		if (!unix) return '�';
+		return new Date(unix * 1000).toLocaleDateString('en-US', {
+			year: 'numeric',
+			month: 'long',
+			day: 'numeric'
+		});
+	}
+
+	function formatAmount(cents: number | null | undefined): string {
+		if (cents == null) return '$0.00';
+		return `$${(cents / 100).toFixed(2)}`;
+	}
+
+	const isTrialing = $derived(subscription?.status === 'trialing');
+	const isActive = $derived(subscription?.status === 'active' || isTrialing);
+	const isCancelledAtEnd = $derived(subscription?.cancel_at_period_end === true);
+	// Cancelled during a trial: trial ends and they will NOT be charged
+	const isTrialingAndCancelled = $derived(isTrialing && isCancelledAtEnd);
+
+	async function handleCancel() {
+		cancelling = true;
+		try {
+			await stripeApi.cancelSubscription();
+			toast.success(
+				'Subscription cancelled. You will retain access until the end of your billing period.'
+			);
+			subscription = await stripeApi.getSubscription();
+			showCancelConfirm = false;
+		} catch {
+			toast.error('Failed to cancel subscription. Please try again.');
+		} finally {
+			cancelling = false;
+		}
+	}
+</script>
+
+<svelte:head>
+	<title>Billing — Taren</title>
+</svelte:head>
+
+<PageContainer>
+	<!-- Title bar -->
+	<PageHeader title="Billing" />
+
+	<!-- Content -->
+	<PageContent>
+		<div class="mx-auto max-w-2xl space-y-5">
+			{#if loading}
+				<!-- Custom Skeleton -->
+				<Card.Root class="p-5">
+					<div class="mb-4 flex items-center justify-between">
+						<div class="flex items-center gap-3">
+							<Skeleton class="h-10 w-10 rounded-lg" />
+							<div>
+								<Skeleton class="mb-1 h-3 w-20" />
+								<Skeleton class="h-6 w-24" />
+							</div>
+						</div>
+						<Skeleton class="h-6 w-20 rounded-full" />
+					</div>
+					<div class="space-y-3">
+						{#each [1, 2, 3] as _}
+							<div class="flex items-center justify-between">
+								<div class="flex items-center gap-3">
+									<Skeleton class="h-4 w-4" />
+									<Skeleton class="h-4 w-24" />
+								</div>
+								<Skeleton class="h-4 w-32" />
+							</div>
+						{/each}
+					</div>
+				</Card.Root>
+			{:else if !subscription}
+				<!-- No subscription -->
+				<Card.Root class="space-y-4 p-10 text-center">
+					<div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-muted">
+						<CreditCard class="h-7 w-7 text-muted-foreground" />
+					</div>
+					<h2 class="text-xl font-semibold">No active subscription</h2>
+					<p class="text-sm text-muted-foreground">
+						You are currently on the free plan. Upgrade to unlock full features.
+					</p>
+					<Button href="/pricing" class="gap-2">
+						<Zap class="h-4 w-4" />
+						View Plans
+					</Button>
+				</Card.Root>
+			{:else}
+				<!-- Status banner -->
+				{#if isTrialingAndCancelled}
+					<!-- Cancelled during trial: make it crystal clear they won't be charged -->
+					<Alert.Root variant="destructive" class="border-red-500/30 bg-red-500/10 text-red-400">
+						<AlertTriangle class="h-4 w-4" />
+						<Alert.Title class="text-red-300">Trial Ending — No Charge</Alert.Title>
+						<Alert.Description class="text-red-400/80">
+							You cancelled during your trial. Your access ends on
+							<span class="font-medium text-red-300">{formatDate(subscription.trial_end)}</span>.
+							<span class="font-medium text-red-300">You will not be charged.</span>
+						</Alert.Description>
+					</Alert.Root>
+				{:else if isTrialing}
+					<Alert.Root class="border-amber-500/30 bg-amber-500/10 text-amber-400">
+						<Clock class="h-4 w-4 text-amber-400" />
+						<Alert.Title class="text-amber-300">Free Trial Active</Alert.Title>
+						<Alert.Description class="text-amber-400/80">
+							Your trial ends on <span class="font-medium text-amber-300"
+								>{formatDate(subscription.trial_end)}</span
+							>. You will be charged
+							<span class="font-medium text-amber-300"
+								>{formatAmount(subscription.amount)}/{subscription.interval}</span
+							> after the trial ends.
+						</Alert.Description>
+					</Alert.Root>
+				{:else if isCancelledAtEnd}
+					<Alert.Root variant="destructive" class="border-red-500/30 bg-red-500/10 text-red-400">
+						<AlertTriangle class="h-4 w-4" />
+						<Alert.Title class="text-red-300">Cancellation Scheduled</Alert.Title>
+						<Alert.Description class="text-red-400/80">
+							Your subscription will end on <span class="font-medium text-red-300"
+								>{formatDate(subscription.current_period_end)}</span
+							>. You retain full access until then.
+						</Alert.Description>
+					</Alert.Root>
+				{/if}
+
+				<!-- Main card -->
+				<Card.Root class="p-5">
+					<!-- Card header -->
+					<div class="mb-4 flex items-center justify-between">
+						<div class="flex items-center gap-3">
+							<div class="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-500/15">
+								<Zap class="h-5 w-5 text-indigo-400" />
+							</div>
+							<div>
+								<p class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+									Current Plan
+								</p>
+								<p class="text-lg font-bold">{subscription.tier}</p>
+							</div>
+						</div>
+						<span
+							class={[
+								'inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold',
+								isCancelledAtEnd
+									? 'border-red-500/40 bg-red-500/10 text-red-400'
+									: isTrialing
+										? 'border-amber-500/40 bg-amber-500/10 text-amber-400'
+										: 'border-emerald-500/40 bg-emerald-500/10 text-emerald-400'
+							].join(' ')}
+						>
+							{#if isCancelledAtEnd}
+								<XCircle class="h-3 w-3" />
+								Cancelling
+							{:else if isTrialing}
+								<Clock class="h-3 w-3" />
+								Trial
+							{:else}
+								<CheckCircle2 class="h-3 w-3" />
+								Active
+							{/if}
+						</span>
+					</div>
+
+					<!-- Details rows -->
+					<div class="mb-5 space-y-3">
+						<!-- Billing amount -->
+						<div class="flex items-center justify-between">
+							<div class="flex items-center gap-3">
+								<CreditCard class="h-4 w-4 text-muted-foreground" />
+								<span class="text-sm text-muted-foreground">Billing amount</span>
+							</div>
+							<span class="text-sm font-semibold">
+								{#if isTrialingAndCancelled}
+									<span class="font-bold text-emerald-400">No charge</span>
+								{:else if isTrialing}
+									<span class="mr-2 font-bold text-emerald-400">$0.00 now</span>
+									<span class="text-muted-foreground"
+										>then {formatAmount(subscription.amount)}/{subscription.interval}</span
+									>
+								{:else}
+									{formatAmount(subscription.amount)} / {subscription.interval}
+								{/if}
+							</span>
+						</div>
+
+						<!-- Billing interval -->
+						<div class="flex items-center justify-between">
+							<div class="flex items-center gap-3">
+								<Calendar class="h-4 w-4 text-muted-foreground" />
+								<span class="text-sm text-muted-foreground">Billing interval</span>
+							</div>
+							<span class="text-sm font-semibold capitalize">{subscription.interval}ly</span>
+						</div>
+
+						<!-- Trial / next billing dates -->
+						{#if isTrialingAndCancelled && subscription.trial_end}
+							<!-- Cancelled during trial: show trial end as the access end date -->
+							<div class="flex items-center justify-between">
+								<div class="flex items-center gap-3">
+									<Clock class="h-4 w-4 text-muted-foreground" />
+									<span class="text-sm text-muted-foreground">Access ends</span>
+								</div>
+								<span class="text-sm font-semibold text-red-400"
+									>{formatDate(subscription.trial_end)}</span
+								>
+							</div>
+						{:else if isTrialing && subscription.trial_end}
+							<div class="flex items-center justify-between">
+								<div class="flex items-center gap-3">
+									<Clock class="h-4 w-4 text-muted-foreground" />
+									<span class="text-sm text-muted-foreground">Trial ends</span>
+								</div>
+								<span class="text-sm font-semibold text-amber-400"
+									>{formatDate(subscription.trial_end)}</span
+								>
+							</div>
+							<div class="flex items-center justify-between">
+								<div class="flex items-center gap-3">
+									<Calendar class="h-4 w-4 text-muted-foreground" />
+									<span class="text-sm text-muted-foreground">First charge on</span>
+								</div>
+								<span class="text-sm font-semibold">{formatDate(subscription.trial_end)}</span>
+							</div>
+						{:else}
+							<div class="flex items-center justify-between">
+								<div class="flex items-center gap-3">
+									<Calendar class="h-4 w-4 text-muted-foreground" />
+									<span class="text-sm text-muted-foreground">
+										{isCancelledAtEnd ? 'Access ends' : 'Next billing date'}
+									</span>
+								</div>
+								<span class="text-sm font-semibold {isCancelledAtEnd ? 'text-red-400' : ''}"
+									>{formatDate(subscription.current_period_end)}</span
+								>
+							</div>
+						{/if}
+					</div>
+
+					<!-- Cancel action -->
+					{#if !isCancelledAtEnd}
+						<div class="my-5 h-px bg-border"></div>
+						<div>
+							{#if !showCancelConfirm}
+								<button
+									id="cancel-subscription-btn"
+									onclick={() => (showCancelConfirm = true)}
+									class="flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-destructive"
+								>
+									<XCircle class="h-4 w-4" />
+									Cancel subscription
+								</button>
+							{:else}
+								<div class="space-y-3">
+									<p class="text-sm text-muted-foreground">
+										{#if isTrialing}
+											Are you sure? Your trial access ends on
+											<span class="font-medium text-foreground"
+												>{formatDate(subscription.trial_end)}</span
+											>. <span class="font-medium text-foreground">You will not be charged.</span>
+										{:else}
+											Are you sure? Your subscription stays active until
+											<span class="font-medium text-foreground"
+												>{formatDate(subscription.current_period_end)}</span
+											>, then ends.
+										{/if}
+									</p>
+									<div class="flex items-center gap-3">
+										<Button
+											id="confirm-cancel-btn"
+											variant="destructive"
+											onclick={handleCancel}
+											disabled={cancelling}
+											class="gap-2"
+										>
+											{#if cancelling}
+												<svg class="h-4 w-4 animate-spin" viewBox="0 0 24 24" fill="none">
+													<circle
+														class="opacity-25"
+														cx="12"
+														cy="12"
+														r="10"
+														stroke="currentColor"
+														stroke-width="4"
+													></circle>
+													<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"
+													></path>
+												</svg>
+												Cancelling
+											{:else}
+												Yes, cancel it
+											{/if}
+										</Button>
+										<button
+											onclick={() => (showCancelConfirm = false)}
+											class="text-sm text-muted-foreground transition-colors hover:text-foreground"
+										>
+											Keep subscription
+										</button>
+									</div>
+								</div>
+							{/if}
+						</div>
+					{/if}
+				</Card.Root>
+
+				<!-- Upgrade nudge (trial only, not when already cancelled) -->
+				{#if isTrialing && !isCancelledAtEnd}
+					<div
+						class="flex items-center justify-between gap-4 rounded-xl border border-indigo-500/20 bg-indigo-500/5 px-6 py-4"
+					>
+						<div>
+							<p class="text-sm font-medium">Enjoying Taren?</p>
+							<p class="mt-0.5 text-xs text-muted-foreground">
+								Upgrade to Professional for more scans and advanced analytics.
+							</p>
+						</div>
+						<a
+							href="/pricing"
+							class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-500"
+						>
+							Upgrade
+							<ChevronRight class="h-4 w-4" />
+						</a>
+					</div>
+				{/if}
+			{/if}
+		</div>
+	</PageContent>
+</PageContainer>

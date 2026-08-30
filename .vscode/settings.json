@@ -1,5 +1,13 @@
 {
-	"files.associations": {
-		"*.css": "tailwindcss"
-	}
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
+  "python.analysis.extraPaths": [
+    "packages/backend/src",
+    "packages/backend"
+  ],
+  "python.autoComplete.extraPaths": [
+    "packages/backend/src",
+    "packages/backend"
+  ]
 }

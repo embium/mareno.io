@@ -1,0 +1,147 @@
+I want to grab all subreddit posts, fetch its details append them + its comments into the prompt analysis template, so something like {post: {author: "someauthor", content: "content", comments: commentsList}, post: ...}. Then we tell the AI to use that as context for the comments inside.
+
+id	"f984aed8-851c-4c70-a6bb-c0ec1dbe29df"
+productId	"a0e9fe8e-3642-45d0-9108-025fe5d37730"
+status	"trialing"
+amount	1900
+currency	"usd"
+recurringInterval	"month"
+currentPeriodStart	"2026-07-31T13:08:03.349Z"
+currentPeriodEnd	"2026-08-07T13:07:34.489Z"
+cancelAtPeriodEnd	false
+canceledAt	null
+organizationId	nul
+
+{"session":{"expiresAt":"2026-08-10T15:50:27.126Z","token":"pYqvZVjQDYxH5g3jRJ4mnesaKzpOcWlL","createdAt":"2026-08-03T15:50:27.126Z","updatedAt":"2026-08-03T15:50:27.126Z","ipAddress":"169.238.72.171","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0","userId":"uxaySpfTcsNxiApx7SYssIzO3khlYgjE","id":"qA6ZOkc0nD0uFhue5itnIZOwMFB6XxZc"},"user":{"name":"Michael Mooney","email":"mikeymooney1991@gmail.com","emailVerified":true,"image":"https://lh3.googleusercontent.com/a/ACg8ocJ8QkwoRQG24pYlRBiRmudBEmea5tEuUFyZYenIi9kLySR5Od8=s96-c","createdAt":"2026-07-31T13:03:37.946Z","updatedAt":"2026-07-31T13:03:37.946Z","id":"uxaySpfTcsNxiApx7SYssIzO3khlYgjE"}}
+
+{"subreddits":[{"id":"I3G6lyqmCatMI8_xWYZ_Z","order":0,"createdAt":"2026-07-31T13:13:59.312Z","subreddit":{"id":"I3G6lyqmCatMI8_xWYZ_Z","name":"localllama","title":"r/localllama","category":"Manually added","sizeBand":"Unknown","language":"EN","subscriberCount":null}},{"id":"9kYCOozUw5eBdGpghdPKf","order":1,"createdAt":"2026-07-31T13:14:49.231Z","subreddit":{"id":"9kYCOozUw5eBdGpghdPKf","name":"llmdevs","title":"r/llmdevs","category":"Manually added","sizeBand":"Unknown","language":"EN","subscriberCount":null}}],"count":2,"limits":{"maxSubreddits":2,"maxScansPerDay":5,"maxTimeframeDays":90,"tier":"trial","purchasedScans":0}}
+
+
+r/affiliatemarketing
+r/Entrepreneur
+r/digital_marketing
+r/marketing
+r/SEO
+r/smallbusiness
+r/PPC
+r/WorkOnline
+r/JustStart
+r/beermoney
+r/SideProject
+r/passive_income
+r/freelance
+r/webdev
+r/blogging
+
+r/physicaltherapy
+r/PTschool
+r/rehab
+r/OccupationalTherapy
+r/SportsMedicine
+r/Chiropractic
+r/Running
+r/Crossfit
+r/bodyweightfitness
+r/Fitness
+r/AskDocs
+r/orthopaedics
+r/MassageTherapists
+r/painmanagement
+r/PhysicalTherapyAssistants
+
+
+r/medicine
+r/medicalschool
+r/doctors
+r/Residency
+r/premed
+r/physicianassistant
+r/nursing
+r/EMDocs
+r/Anesthesia
+r/medical
+r/AskDocs
+r/dentistry
+r/radiology
+r/Cardiology
+r/familymedicine
+
+r/Entrepreneur
+r/startups
+r/smallbusiness
+r/SaaS
+r/ProductManagement
+r/marketing
+r/EntrepreneurRideAlong
+r/IndieHackers
+r/SideProject
+r/digital_marketing
+r/ecommerce
+r/business
+r/Productivity
+r/consulting
+r/Freelance
+
+r/Law
+r/legaladvice
+r/LawSchool
+r/Ask_Lawyers
+r/legalcareer
+r/lawyers
+r/lawstudents
+r/criminallaw
+r/legaladviceofftopic
+r/paralegal
+r/BigLaw
+r/legaltech
+r/PatentLaw
+r/lawfirm
+r/publicdefenders
+
+r/gamedevs
+r/gaming
+r/indiegaming
+r/gameideas
+r/unity3d
+r/unrealengine
+r/godot
+r/gameprogramming
+r/gamedevjobs
+r/gameaudio
+r/gameart
+r/gamedevnet
+r/gameengines
+r/gamedesign
+r/gametesting
+
+r/networking
+r/sysadmin
+r/ccna
+r/cisco
+r/homelab
+r/ITCareerQuestions
+r/netsec
+r/firewalls
+r/msp
+r/networkingnoobs
+r/Juniper
+r/Ubiquiti
+r/datacenter
+r/ITdept
+r/techsupport
+
+r/programming
+r/webdev
+r/learnprogramming
+r/javascript
+r/reactjs
+r/Frontend
+r/Backend
+r/devops
+r/cscareerquestions
+r/node
+r/fullstack
+r/angular
+r/django
+r/vuejs
+r/webdevjobs
