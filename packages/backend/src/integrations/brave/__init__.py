@@ -4,7 +4,7 @@ This module provides integration with the Brave Search engine,
 supporting both web and news search with result parsing and content extraction.
 """
 
-from integrations.brave.brave import (
+from integrations.brave.search import (
     BraveNewsResult,
     BraveSearchResult,
     extract_news_results,

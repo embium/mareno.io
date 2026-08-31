@@ -177,12 +177,11 @@ TIMELIMIT_MAP: dict[str, str] = {
 def extract_web_results(soup: BeautifulSoup) -> list[BraveSearchResult]:
     """Extract organic web results from Brave search HTML."""
     results: list[BraveSearchResult] = []
-    seen_cards = soup.select(
-        "div[data-type='search-result'], div.snippet, div[data-pos]"
-    )
-    print(seen_cards)
+    seen_cards = soup.select("div[data-type='search-result'], div.snippet, div[data-pos]")
 
     for el in seen_cards:
+        if el.get('data-type') != 'web':
+            continue
         # Extract title:
         title_el = el.select_one(".title, .search-snippet-title")
         title = title_el.get_text().strip() if title_el else ""
@@ -227,7 +226,7 @@ def extract_web_results(soup: BeautifulSoup) -> list[BraveSearchResult]:
         )
         if not body_el:
             body_el = el.select_one(
-                ".snippet-description, .content .description"
+                ".snippet-description, .content .description, .inline-qa-answer"
             )
 
         description = ""
@@ -456,8 +455,8 @@ def search_brave(
                     )
 
                 html = response.text
-                # with open("brave.html", "w", encoding="utf-8") as f:
-                #     f.write(html)
+                with open("brave.html", "w", encoding="utf-8") as f:
+                    f.write(html)
                 # with open("brave.html", "r", encoding="utf-8") as f:
                 #     html = f.read()
                 if not html or not html.strip():

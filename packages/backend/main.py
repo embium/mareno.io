@@ -15,7 +15,7 @@ from core.queue import close_redis_pool, init_redis_pool
 from core.rate_limit import limiter
 from models.api_key import ApiKey  # noqa: F401 - registers ApiKey with Base.metadata
 from models.user import EmailVerification, Session, User  # noqa: F401 - registers models
-from routers import api_keys, auth, search, stripe as stripe_router, users
+from routers import answers, api_keys, auth, search, stripe as stripe_router, users
 
 # Configure logging
 logging.basicConfig(
@@ -57,6 +57,10 @@ openapi_tags = [
         "description": "Brave Search API endpoints. Supports web & news search, pagination, time filters, and text extraction. Requires API Key authentication.",
     },
     {
+        "name": "Answers",
+        "description": "AI-powered Direct Question Answering API with inline citation markers and web sources. Requires API Key authentication.",
+    },
+    {
         "name": "API Keys",
         "description": "API Key management endpoints: generate cryptographically secure keys (with one-time full key reveal), list keys with masked previews, and revoke keys.",
     },
@@ -88,6 +92,7 @@ High-performance search API powered by Brave Search integration, featuring:
 
 - **API Key Management**: Secure Argon2-hashed API keys with one-time generation reveal and instant revocation.
 - **Search Integration**: Web and news search with SafeSearch, region filtering, time limits, and content extraction.
+- **AI Answers**: Direct question answering with structured synthesis and source citations.
 - **Interactive Documentation**: Available via **Swagger UI** (`/docs`) and **ReDoc** (`/redoc`).
 - **Standard Authentication**: JWT session-based auth for user management and API keys for programmatic endpoints.
     """,
@@ -115,6 +120,7 @@ app.add_middleware(
 
 # Register routers
 app.include_router(search.router)
+app.include_router(answers.router)
 app.include_router(api_keys.router)
 app.include_router(auth.router)
 app.include_router(users.router)

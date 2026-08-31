@@ -1,6 +1,6 @@
 {
   "private": true,
-  "name": "@taren/backend",
+  "name": "@mareno/backend",
   "scripts": {
     "dev": "cross-env PYTHONUTF8=1 uvicorn main:app --reload --reload-dir=. --host 0.0.0.0 --port 8000"
   },

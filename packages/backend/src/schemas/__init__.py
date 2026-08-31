@@ -1,5 +1,13 @@
 """Schemas package - Pydantic models for request/response validation and documentation."""
 
+from schemas.answer import (
+    AnswerCitation,
+    AnswerRequest,
+    AnswerResponse,
+    BingAnswerRequest,
+    BingAnswerResponse,
+    BingCitationSchema,
+)
 from schemas.api_key import (
     ApiKeyCreate,
     ApiKeyCreateResponse,
@@ -71,4 +79,11 @@ __all__ = [
     "ErrorResponse",
     "ValidationErrorItem",
     "ValidationErrorResponse",
+    # Answers
+    "AnswerCitation",
+    "AnswerRequest",
+    "AnswerResponse",
+    "BingAnswerRequest",
+    "BingAnswerResponse",
+    "BingCitationSchema",
 ]
