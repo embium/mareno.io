@@ -30,17 +30,6 @@ router = APIRouter(prefix="/answers", tags=["Answers"])
     """,
 )
 @router.post(
-    "/bing",
-    response_model=AnswerResponse,
-    status_code=status.HTTP_200_OK,
-    summary="Get Bing AI answer with citations",
-    description="""
-    Fetch an AI answer with citations directly powered by Bing Answer engine.
-
-    **Authentication**: Requires a valid API key via `X-API-Key` header or `Authorization: Bearer <key>`.
-    """,
-)
-@router.post(
     "/query",
     response_model=AnswerResponse,
     status_code=status.HTTP_200_OK,
@@ -133,7 +122,6 @@ async def generate_answer(
             text=answer["text"],
             citations=citations,
             count=len(citations),
-            answer_type="bing",
         )
 
     except HTTPException:

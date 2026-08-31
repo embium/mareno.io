@@ -83,10 +83,6 @@ class AnswerResponse(BaseModel):
         ...,
         description="Total number of citations associated with the answer",
     )
-    answer_type: str = Field(
-        "bing",
-        description="Answer provider engine identifier ('bing')",
-    )
 
     class Config:
         """Pydantic config."""

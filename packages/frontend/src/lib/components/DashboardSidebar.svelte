@@ -21,7 +21,7 @@
 	const NAV_ITEMS = [
 		{ icon: LayoutDashboard, label: 'Overview', href: '/dashboard' },
 		{ icon: KeyRound, label: 'API Keys', href: '/dashboard/api-keys' },
-		{ icon: BookOpen, label: 'API Docs', href: '/docs' },
+		{ icon: BookOpen, label: 'Documentation', href: '/docs' },
 		{ icon: CreditCard, label: 'Billing', href: '/dashboard/subscription' },
 		{ icon: Settings, label: 'Settings', href: '/dashboard/settings' }
 	];

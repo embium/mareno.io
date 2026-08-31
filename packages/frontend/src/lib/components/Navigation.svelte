@@ -43,6 +43,12 @@
 			<!-- Guest Links -->
 			<nav class="flex items-center gap-1">
 				<a
+					href="/docs"
+					class="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
+				>
+					Docs
+				</a>
+				<a
 					href="/pricing"
 					class="rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground"
 				>

@@ -72,8 +72,7 @@
 	let activeSnippetTabs = $state<Record<string, string>>({
 		'search-web': 'curl',
 		'search-news': 'curl',
-		'answers-direct': 'curl',
-		'answers-bing': 'curl'
+		'answers-direct': 'curl'
 	});
 
 	// API Categories & Endpoints Registry (Extensible for future routes)
@@ -691,123 +690,6 @@ response = requests.post(url, json=payload, headers=headers)
 data = response.json()
 print("Answer:\\n", data["text"])
 print("\\nCitations:\\n", data["citations"])`
-					}
-				},
-				{
-					id: 'answers-bing',
-					name: 'Bing AI Answer (Provider Endpoint)',
-					method: 'POST',
-					path: '/answers/bing',
-					summary: 'Target Bing Answers provider endpoint directly',
-					description:
-						'Dedicated provider endpoint for Bing Answers. Queries Microsoft Bing AI Answer engine with anti-bot evasion and extracts cleaned Markdown content with citation cards.',
-					authRequired: true,
-					rateLimit: 'Tier based (Default: 30 req/min)',
-					headers: [
-						{
-							name: 'X-API-Key',
-							type: 'string',
-							required: true,
-							description: 'Secret API Key generated in your dashboard.',
-							example: 'tare_live_7a9f...'
-						},
-						{
-							name: 'Content-Type',
-							type: 'string',
-							required: true,
-							description: 'Request payload format.',
-							example: 'application/json'
-						}
-					],
-					bodyParams: [
-						{
-							name: 'query',
-							type: 'string',
-							required: true,
-							description: 'Question or prompt string (1 to 500 characters).'
-						},
-						{
-							name: 'timeout',
-							type: 'integer',
-							required: false,
-							default: '15',
-							description: 'Network timeout in seconds (min: 5, max: 60).'
-						}
-					],
-					responseSchema: [
-						{ name: 'query', type: 'string', description: 'The search query executed.' },
-						{
-							name: 'text',
-							type: 'string',
-							description: 'Answer text formatted in Markdown with inline [1] citation tags.'
-						},
-						{
-							name: 'citations',
-							type: 'array<AnswerCitation>',
-							description: 'Extracted web citations with numbers, titles, and links.'
-						},
-						{ name: 'count', type: 'integer', description: 'Number of citations.' },
-						{ name: 'answer_type', type: 'string', description: 'Engine identifier ("bing").' }
-					],
-					sampleRequest: {
-						query: 'What is WebAssembly and how does it execute?',
-						timeout: 15
-					},
-					sampleResponse: {
-						query: 'What is WebAssembly and how does it execute?',
-						text: 'WebAssembly (abbreviated Wasm) is a binary instruction format for a stack-based virtual machine [1]. Wasm is designed as a portable compilation target for programming languages like C, C++, and Rust, enabling high-performance execution on the web at near-native speed [2].',
-						citations: [
-							{
-								number: 1,
-								title: 'WebAssembly Specification - W3C',
-								url: 'https://webassembly.github.io/spec/'
-							},
-							{
-								number: 2,
-								title: 'WebAssembly Concepts - MDN Web Docs',
-								url: 'https://developer.mozilla.org/en-US/docs/WebAssembly/Concepts'
-							}
-						],
-						count: 2,
-						answer_type: 'bing'
-					},
-					snippets: {
-						curl: `curl -X POST https://mareno.io/api/answers/bing \\
-  -H "X-API-Key: YOUR_API_KEY" \\
-  -H "Content-Type: application/json" \\
-  -d '{
-    "query": "What is WebAssembly and how does it execute?",
-    "timeout": 15
-  }'`,
-						javascript: `const response = await fetch("https://mareno.io/api/answers/bing", {
-  method: "POST",
-  headers: {
-    "X-API-Key": process.env.TAREN_API_KEY,
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify({
-    query: "What is WebAssembly and how does it execute?",
-    timeout: 15
-  })
-});
-
-const data = await response.json();
-console.log(data);`,
-						python: `import os
-import requests
-
-url = "https://mareno.io/api/answers/bing"
-headers = {
-    "X-API-Key": os.getenv("TAREN_API_KEY"),
-    "Content-Type": "application/json"
-}
-payload = {
-    "query": "What is WebAssembly and how does it execute?",
-    "timeout": 15
-}
-
-response = requests.post(url, json=payload, headers=headers)
-print(response.json())`
 					}
 				}
 			]

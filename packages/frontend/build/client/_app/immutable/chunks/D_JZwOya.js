@@ -1,1 +1,0 @@
-import"./DsnmJJEf.js";import{s,r as i}from"./BUUoNymH.js";import{I as p}from"./BuoDCakB.js";function d(r,e){let o=i(e,["$$slots","$$events","$$legacy"]);const t=[["rect",{width:"20",height:"14",x:"2",y:"5",rx:"2"}],["line",{x1:"2",x2:"22",y1:"10",y2:"10"}]];p(r,s({name:"credit-card"},()=>o,{get iconNode(){return t}}))}export{d as C};
