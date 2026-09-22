@@ -30,3 +30,4 @@ Requires-Dist: requests>=2.34.2
 Requires-Dist: curl-cffi>=0.16.2
 Requires-Dist: fake-useragent>=2.2.0
 Requires-Dist: stripe>=15.6.0
+Requires-Dist: trafilatura>=2.2.0

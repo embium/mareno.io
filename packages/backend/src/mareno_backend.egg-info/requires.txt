@@ -25,3 +25,4 @@ requests>=2.34.2
 curl-cffi>=0.16.2
 fake-useragent>=2.2.0
 stripe>=15.6.0
+trafilatura>=2.2.0

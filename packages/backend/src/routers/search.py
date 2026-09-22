@@ -98,6 +98,7 @@ async def search_web(
             timelimit=request.timelimit,
             page=request.page,
             extraction=request.extraction,
+            format=request.format,
         )
 
         logger.info(

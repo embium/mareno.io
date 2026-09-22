@@ -1,6 +1,7 @@
 """Brave Search module using BeautifulSoup and curl_cffi."""
 
 from __future__ import annotations
+from curl_cffi import curl
 
 import concurrent.futures
 import copy
@@ -11,6 +12,8 @@ import random
 import re
 import sys
 import time
+import trafilatura
+
 from pathlib import Path
 from typing import Any, Literal, TypedDict
 
@@ -177,10 +180,12 @@ TIMELIMIT_MAP: dict[str, str] = {
 def extract_web_results(soup: BeautifulSoup) -> list[BraveSearchResult]:
     """Extract organic web results from Brave search HTML."""
     results: list[BraveSearchResult] = []
-    seen_cards = soup.select("div[data-type='search-result'], div.snippet, div[data-pos]")
+    seen_cards = soup.select(
+        "div[data-type='search-result'], div.snippet, div[data-pos]"
+    )
 
     for el in seen_cards:
-        if el.get('data-type') != 'web':
+        if el.get("data-type") != "web":
             continue
         # Extract title:
         title_el = el.select_one(".title, .search-snippet-title")
@@ -361,6 +366,7 @@ def search_brave(
     extraction: bool = False,
     proxy: str | None = None,
     news: bool = False,
+    format: Literal["html", "markdown"] = "html",
     **kwargs: Any,
 ) -> list[Any]:
     """Searches Brave Search engine and returns extracted results.
@@ -519,11 +525,25 @@ def search_brave(
                 item = futures[future]
                 try:
                     result = future.result()
-                    clean_text = re.sub(r"\n+", " ", result)
-                    clean_text = BeautifulSoup(
-                        clean_text, "html.parser"
-                    ).get_text()
-                    item["content"] = re.sub(r"\s+", " ", clean_text).strip()
+                    if format == "markdown":
+                        markdown_text = (
+                            trafilatura.extract(
+                                result,
+                                include_tables=True,
+                                include_links=False,
+                                output_format="markdown",
+                            )
+                            or ""
+                        )
+                        item["content"] = markdown_text
+                    else:
+                        clean_text = re.sub(r"\n+", " ", result)
+                        clean_text = BeautifulSoup(
+                            clean_text, "html.parser"
+                        ).get_text()
+                        item["content"] = re.sub(
+                            r"\s+", " ", clean_text
+                        ).strip()
                 except Exception:
                     item["content"] = None
 

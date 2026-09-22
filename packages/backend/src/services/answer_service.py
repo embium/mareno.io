@@ -35,7 +35,9 @@ class AnswerService:
             RuntimeError: If answer fetching fails after retries
         """
         try:
-            logger.debug(f"Fetching AI answer for query='{query}', timeout={timeout}")
+            logger.debug(
+                f"Fetching AI answer for query='{query}', timeout={timeout}"
+            )
 
             answer = get_bing_answer(
                 query=query,
@@ -79,8 +81,8 @@ class AnswerService:
         if not query or not query.strip():
             return False, "Query cannot be empty"
 
-        if len(query.strip()) > 500:
-            return False, "Query must be 500 characters or less"
+        if len(query.strip()) > 100:
+            return False, "Query must be 100 characters or less"
 
         if timeout is not None and (timeout < 5 or timeout > 60):
             return False, "Timeout must be between 5 and 60 seconds"

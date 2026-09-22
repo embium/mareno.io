@@ -42,6 +42,10 @@ class SearchRequest(BaseModel):
         False,
         description="Whether to extract full page content for each result (may be slower)",
     )
+    format: Literal["html", "markdown"] = Field(
+        "html",
+        description="Format of the extracted content (default: html, markdown)",
+    )
 
     class Config:
         """Pydantic config."""

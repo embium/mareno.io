@@ -20,6 +20,7 @@ class SearchService:
         timelimit: Optional[Literal["d", "w", "m", "y"]] = None,
         page: int = 1,
         extraction: bool = False,
+        format: Literal["html", "markdown"] = "html",
     ) -> list[Any]:
         """
         Perform a web search using Brave Search.
@@ -41,7 +42,9 @@ class SearchService:
             RuntimeError: If Brave search fails after retries
         """
         try:
-            logger.debug(f"Performing web search: query='{query}', count={count}")
+            logger.debug(
+                f"Performing web search: query='{query}', count={count}"
+            )
 
             results = search_brave(
                 query=query,
@@ -52,6 +55,7 @@ class SearchService:
                 page=page,
                 extraction=extraction,
                 news=False,
+                format=format,
             )
 
             logger.info(
@@ -98,7 +102,9 @@ class SearchService:
             RuntimeError: If Brave search fails after retries
         """
         try:
-            logger.debug(f"Performing news search: query='{query}', count={count}")
+            logger.debug(
+                f"Performing news search: query='{query}', count={count}"
+            )
 
             results = search_brave(
                 query=query,
